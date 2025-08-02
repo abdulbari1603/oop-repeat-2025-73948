@@ -1,0 +1,130 @@
+@model IEnumerable<CarServMgmt.Domain.Car>
+
+@{
+    ViewData["Title"] = "Cars Management";
+}
+
+<div class="page-header">
+    <h1><i class="fas fa-car me-3"></i>Cars Management</h1>
+    <p class="mb-0">Manage vehicle registrations and customer assignments</p>
+</div>
+
+<div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="mb-0"><i class="fas fa-list me-2"></i>Vehicle Registry</h5>
+        @if (User.IsInRole("Admin") || User.IsInRole("Receptionist"))
+        {
+            <a asp-action="Create" class="btn btn-primary">
+                <i class="fas fa-plus me-2"></i>Add New Car
+            </a>
+        }
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th><i class="fas fa-hashtag me-2"></i>Registration Number</th>
+                        <th><i class="fas fa-user me-2"></i>Customer</th>
+                        <th><i class="fas fa-cogs me-2"></i>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model) 
+                    {
+                        <tr>
+                            <td>
+                                <strong>@Html.DisplayFor(modelItem => item.RegistrationNumber)</strong>
+                            </td>
+                            <td>
+                                @if (item.Customer != null)
+                                {
+                                    <span class="badge badge-info">@item.Customer.Name</span>
+                                }
+                                else
+                                {
+                                    <span class="text-muted">No customer assigned</span>
+                                }
+                            </td>
+                            <td class="action-links">
+                                <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-info">
+                                    <i class="fas fa-eye me-1"></i>Details
+                                </a>
+                                @if (User.IsInRole("Admin"))
+                                {
+                                    <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-warning">
+                                        <i class="fas fa-edit me-1"></i>Edit
+                                    </a>
+                                    <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-danger">
+                                        <i class="fas fa-trash me-1"></i>Delete
+                                    </a>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        
+        @if (!Model.Any())
+        {
+            <div class="text-center py-5">
+                <i class="fas fa-car fa-4x text-muted mb-3"></i>
+                <h5 class="text-muted">No cars registered yet</h5>
+                <p class="text-muted">Start by adding the first vehicle to the system.</p>
+                @if (User.IsInRole("Admin") || User.IsInRole("Receptionist"))
+                {
+                    <a asp-action="Create" class="btn btn-primary">
+                        <i class="fas fa-plus me-2"></i>Add First Car
+                    </a>
+                }
+            </div>
+        }
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h6 class="mb-0"><i class="fas fa-info-circle me-2"></i>Quick Information</h6>
+            </div>
+            <div class="card-body">
+                <div class="row text-center">
+                    <div class="col-6">
+                        <h4 class="text-primary">@Model.Count()</h4>
+                        <small class="text-muted">Total Cars</small>
+                    </div>
+                    <div class="col-6">
+                        <h4 class="text-success">@Model.Count(c => c.Customer != null)</h4>
+                        <small class="text-muted">Assigned to Customers</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h6 class="mb-0"><i class="fas fa-user-shield me-2"></i>User Permissions</h6>
+            </div>
+            <div class="card-body">
+                <div class="list-group list-group-flush">
+                    <div class="list-group-item d-flex justify-content-between align-items-center">
+                        <span>View Cars</span>
+                        <span class="badge badge-success">All Users</span>
+                    </div>
+                    <div class="list-group-item d-flex justify-content-between align-items-center">
+                        <span>Add Cars</span>
+                        <span class="badge badge-info">Admin, Receptionist</span>
+                    </div>
+                    <div class="list-group-item d-flex justify-content-between align-items-center">
+                        <span>Edit/Delete</span>
+                        <span class="badge badge-warning">Admin Only</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div> 

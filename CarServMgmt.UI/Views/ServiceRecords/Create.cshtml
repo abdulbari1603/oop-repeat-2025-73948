@@ -1,0 +1,44 @@
+@model CarServMgmt.Domain.ServiceRecord
+
+@{
+    ViewData["Title"] = "Create Service Record";
+}
+
+<h1>Create Service Record</h1>
+
+<form asp-action="Create">
+    <div class="form-group">
+        <label asp-for="CarId" class="control-label">Car</label>
+        <select asp-for="CarId" class="form-control" asp-items="ViewBag.CarId"></select>
+        <span asp-validation-for="CarId" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="MechanicId" class="control-label">Mechanic</label>
+        <select asp-for="MechanicId" class="form-control" asp-items="ViewBag.MechanicId"></select>
+        <span asp-validation-for="MechanicId" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="Description" class="control-label"></label>
+        @if (User.IsInRole("Admin"))
+        {
+            <input asp-for="Description" class="form-control" disabled />
+        }
+        else
+        {
+            <input asp-for="Description" class="form-control" />
+        }
+        <span asp-validation-for="Description" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="Hours" class="control-label"></label>
+        <input asp-for="Hours" class="form-control" />
+        <span asp-validation-for="Hours" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="DateBroughtIn" class="control-label"></label>
+        <input asp-for="DateBroughtIn" class="form-control" type="date" />
+        <span asp-validation-for="DateBroughtIn" class="text-danger"></span>
+    </div>
+    <button type="submit" class="btn btn-primary">Create</button>
+    <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+</form> 

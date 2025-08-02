@@ -1,0 +1,195 @@
+@model IEnumerable<CarServMgmt.UI.Controllers.UsersController.UserWithRole>
+
+@{
+    ViewData["Title"] = "User Management";
+}
+
+<div class="page-header">
+    <h1><i class="fas fa-users me-3"></i>User Management</h1>
+    <p class="mb-0">Manage system users and their roles</p>
+</div>
+
+<div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="mb-0"><i class="fas fa-list me-2"></i>System Users</h5>
+        @if (User.IsInRole("Admin"))
+        {
+            <a asp-action="Create" class="btn btn-primary">
+                <i class="fas fa-plus me-2"></i>Create New User
+            </a>
+        }
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th><i class="fas fa-user me-2"></i>Username</th>
+                        <th><i class="fas fa-envelope me-2"></i>Email</th>
+                        <th><i class="fas fa-shield-alt me-2"></i>Role</th>
+                        <th><i class="fas fa-cogs me-2"></i>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model) 
+                    {
+                        <tr>
+                            <td>
+                                <strong>@item.User.UserName</strong>
+                            </td>
+                            <td>
+                                <i class="fas fa-envelope me-1"></i>@item.User.Email
+                            </td>
+                            <td>
+                                @switch (item.Role)
+                                {
+                                    case "Admin":
+                                        <span class="badge badge-danger">
+                                            <i class="fas fa-crown me-1"></i>@item.Role
+                                        </span>
+                                        break;
+                                    case "Mechanic":
+                                        <span class="badge badge-warning">
+                                            <i class="fas fa-tools me-1"></i>@item.Role
+                                        </span>
+                                        break;
+                                    case "Receptionist":
+                                        <span class="badge badge-info">
+                                            <i class="fas fa-user-tie me-1"></i>@item.Role
+                                        </span>
+                                        break;
+                                    case "Customer":
+                                        <span class="badge badge-success">
+                                            <i class="fas fa-user me-1"></i>@item.Role
+                                        </span>
+                                        break;
+                                    default:
+                                        <span class="badge badge-secondary">@item.Role</span>
+                                        break;
+                                }
+                            </td>
+                            <td class="action-links">
+                                @if (item.Role == "Customer")
+                                {
+                                    <a asp-action="Edit" asp-route-id="@item.User.Id" class="btn btn-sm btn-warning">
+                                        <i class="fas fa-edit me-1"></i>Edit
+                                    </a>
+                                    <a asp-action="Delete" asp-route-id="@item.User.Id" class="btn btn-sm btn-danger">
+                                        <i class="fas fa-trash me-1"></i>Delete
+                                    </a>
+                                }
+                                else
+                                {
+                                    <span class="text-muted">No actions available</span>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        
+        @if (!Model.Any())
+        {
+            <div class="text-center py-5">
+                <i class="fas fa-users fa-4x text-muted mb-3"></i>
+                <h5 class="text-muted">No users found</h5>
+                <p class="text-muted">Start by creating the first user account.</p>
+                @if (User.IsInRole("Admin"))
+                {
+                    <a asp-action="Create" class="btn btn-primary">
+                        <i class="fas fa-plus me-2"></i>Create First User
+                    </a>
+                }
+            </div>
+        }
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h6 class="mb-0"><i class="fas fa-chart-pie me-2"></i>User Statistics</h6>
+            </div>
+            <div class="card-body">
+                <div class="row text-center">
+                    <div class="col-6">
+                        <h4 class="text-primary">@Model.Count()</h4>
+                        <small class="text-muted">Total Users</small>
+                    </div>
+                    <div class="col-6">
+                        <h4 class="text-success">@Model.Count(u => u.Role == "Customer")</h4>
+                        <small class="text-muted">Customers</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h6 class="mb-0"><i class="fas fa-user-shield me-2"></i>Role Distribution</h6>
+            </div>
+            <div class="card-body">
+                <div class="list-group list-group-flush">
+                    <div class="list-group-item d-flex justify-content-between align-items-center">
+                        <span><i class="fas fa-crown me-2"></i>Administrators</span>
+                        <span class="badge badge-danger">@Model.Count(u => u.Role == "Admin")</span>
+                    </div>
+                    <div class="list-group-item d-flex justify-content-between align-items-center">
+                        <span><i class="fas fa-tools me-2"></i>Mechanics</span>
+                        <span class="badge badge-warning">@Model.Count(u => u.Role == "Mechanic")</span>
+                    </div>
+                    <div class="list-group-item d-flex justify-content-between align-items-center">
+                        <span><i class="fas fa-user-tie me-2"></i>Receptionists</span>
+                        <span class="badge badge-info">@Model.Count(u => u.Role == "Receptionist")</span>
+                    </div>
+                    <div class="list-group-item d-flex justify-content-between align-items-center">
+                        <span><i class="fas fa-user me-2"></i>Customers</span>
+                        <span class="badge badge-success">@Model.Count(u => u.Role == "Customer")</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@if (User.IsInRole("Admin"))
+{
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h6 class="mb-0"><i class="fas fa-info-circle me-2"></i>Administrative Notes</h6>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-info">
+                        <i class="fas fa-lightbulb me-2"></i>
+                        <strong>Note:</strong> You can only edit and delete Customer role users. Other roles are managed by the system administrator.
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6 class="text-primary">Available Actions:</h6>
+                            <ul class="list-unstyled">
+                                <li><i class="fas fa-check text-success me-2"></i>Create new Customer accounts</li>
+                                <li><i class="fas fa-check text-success me-2"></i>Edit Customer information</li>
+                                <li><i class="fas fa-check text-success me-2"></i>Delete Customer accounts</li>
+                            </ul>
+                        </div>
+                        <div class="col-md-6">
+                            <h6 class="text-primary">System Roles:</h6>
+                            <ul class="list-unstyled">
+                                <li><i class="fas fa-crown text-danger me-2"></i>Admin - Full system access</li>
+                                <li><i class="fas fa-tools text-warning me-2"></i>Mechanic - Service management</li>
+                                <li><i class="fas fa-user-tie text-info me-2"></i>Receptionist - Customer management</li>
+                                <li><i class="fas fa-user text-success me-2"></i>Customer - Limited access</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+} 
