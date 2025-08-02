@@ -24,16 +24,19 @@
    - Ensure MySQL is running on `localhost:3306` with user `root` and password `root` (or update `appsettings.json`)
 3. **Restore and build**
    ```sh
+   cd CarServMgmt.UI
    dotnet restore
    dotnet build
    ```
 4. **Apply migrations and seed data**
    ```sh
+   cd ..
    dotnet ef database update --project CarServMgmt.UI --startup-project CarServMgmt.UI
    ```
 5. **Run the application**
    ```sh
-   dotnet run --project CarServMgmt.UI
+    cd CarServMgmt.UI
+   dotnet run 
    ```
 6. **Login with sample credentials** (see below)
 
