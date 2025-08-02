@@ -1,0 +1,6 @@
+<p>
+    @if (User.IsInRole("Admin") || User.IsInRole("Mechanic"))
+    {
+        @:<a asp-action="Create" class="btn btn-primary">Create New</a>
+    }
+</p> 

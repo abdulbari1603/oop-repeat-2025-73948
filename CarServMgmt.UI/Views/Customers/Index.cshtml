@@ -1,0 +1,141 @@
+@model IEnumerable<CarServMgmt.Domain.Customer>
+
+@{
+    ViewData["Title"] = "Customer Management";
+}
+
+<div class="page-header">
+    <h1><i class="fas fa-user-friends me-3"></i>Customer Management</h1>
+    <p class="mb-0">Manage customer information and vehicle assignments</p>
+</div>
+
+<div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="mb-0"><i class="fas fa-list me-2"></i>Customer Registry</h5>
+        @if (User.IsInRole("Admin") || User.IsInRole("Receptionist"))
+        {
+            <a asp-action="Create" class="btn btn-primary">
+                <i class="fas fa-plus me-2"></i>Add New Customer
+            </a>
+        }
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th><i class="fas fa-user me-2"></i>Name</th>
+                        <th><i class="fas fa-envelope me-2"></i>Email</th>
+                        <th><i class="fas fa-car me-2"></i>Vehicles</th>
+                        <th><i class="fas fa-cogs me-2"></i>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model) 
+                    {
+                        <tr>
+                            <td>
+                                <strong>@Html.DisplayFor(modelItem => item.Name)</strong>
+                            </td>
+                            <td>
+                                <i class="fas fa-envelope me-1"></i>@Html.DisplayFor(modelItem => item.Email)
+                            </td>
+                            <td>
+                                @if (item.Cars != null && item.Cars.Any())
+                                {
+                                    <span class="badge badge-success">@item.Cars.Count() vehicle(s)</span>
+                                }
+                                else
+                                {
+                                    <span class="text-muted">No vehicles</span>
+                                }
+                            </td>
+                            <td class="action-links">
+                                <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-info">
+                                    <i class="fas fa-eye me-1"></i>Details
+                                </a>
+                                @if (User.IsInRole("Admin") || (User.IsInRole("Customer") && item.Email == User.Identity.Name))
+                                {
+                                    <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-warning">
+                                        <i class="fas fa-edit me-1"></i>Edit
+                                    </a>
+                                }
+                                @if (User.IsInRole("Admin"))
+                                {
+                                    <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-danger">
+                                        <i class="fas fa-trash me-1"></i>Delete
+                                    </a>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        
+        @if (!Model.Any())
+        {
+            <div class="text-center py-5">
+                <i class="fas fa-user-friends fa-4x text-muted mb-3"></i>
+                <h5 class="text-muted">No customers registered yet</h5>
+                <p class="text-muted">Start by adding the first customer to the system.</p>
+                @if (User.IsInRole("Admin") || User.IsInRole("Receptionist"))
+                {
+                    <a asp-action="Create" class="btn btn-primary">
+                        <i class="fas fa-plus me-2"></i>Add First Customer
+                    </a>
+                }
+            </div>
+        }
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h6 class="mb-0"><i class="fas fa-chart-pie me-2"></i>Customer Statistics</h6>
+            </div>
+            <div class="card-body">
+                <div class="row text-center">
+                    <div class="col-6">
+                        <h4 class="text-primary">@Model.Count()</h4>
+                        <small class="text-muted">Total Customers</small>
+                    </div>
+                    <div class="col-6">
+                        <h4 class="text-success">@Model.Count(c => c.Cars != null && c.Cars.Any())</h4>
+                        <small class="text-muted">With Vehicles</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h6 class="mb-0"><i class="fas fa-user-shield me-2"></i>Access Control</h6>
+            </div>
+            <div class="card-body">
+                <div class="list-group list-group-flush">
+                    <div class="list-group-item d-flex justify-content-between align-items-center">
+                        <span>View Customers</span>
+                        <span class="badge badge-success">All Users</span>
+                    </div>
+                    <div class="list-group-item d-flex justify-content-between align-items-center">
+                        <span>Add Customers</span>
+                        <span class="badge badge-info">Admin, Receptionist</span>
+                    </div>
+                    <div class="list-group-item d-flex justify-content-between align-items-center">
+                        <span>Edit Own Profile</span>
+                        <span class="badge badge-warning">Customer</span>
+                    </div>
+                    <div class="list-group-item d-flex justify-content-between align-items-center">
+                        <span>Delete Customers</span>
+                        <span class="badge badge-danger">Admin Only</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div> 

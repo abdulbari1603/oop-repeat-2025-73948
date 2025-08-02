@@ -1,0 +1,55 @@
+@model CarServMgmt.Domain.Car
+
+@{
+    ViewData["Title"] = "Car Details";
+}
+
+<h1>Car Details</h1>
+
+<div>
+    <h4>Car</h4>
+    <hr />
+    <dl class="row">
+        <dt class = "col-sm-2">Registration Number</dt>
+        <dd class = "col-sm-10">@Model.RegistrationNumber</dd>
+        <dt class = "col-sm-2">Customer</dt>
+        <dd class = "col-sm-10">@Model.Customer?.Name</dd>
+    </dl>
+</div>
+@if (Model.ServiceRecords != null && Model.ServiceRecords.Any())
+{
+    <h4>Service Records</h4>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Description</th>
+                <th>Hours</th>
+                <th>Status</th>
+                <th>Completion Date</th>
+                <th>Mechanic</th>
+                <th>Total Cost</th>
+            </tr>
+        </thead>
+        <tbody>
+        @foreach (var sr in Model.ServiceRecords)
+        {
+            <tr>
+                <td>@sr.Description</td>
+                <td>@sr.Hours</td>
+                <td>@(sr.DateCompleted != null ? "Complete" : "In Progress")</td>
+                <td>@(sr.DateCompleted?.ToShortDateString() ?? "-")</td>
+                <td>@sr.Mechanic?.Name</td>
+                <td>@sr.GetTotalCost().ToString("C")</td>
+            </tr>
+        }
+        </tbody>
+    </table>
+}
+<div>
+    <a asp-action="Index">Back to List</a>
+    @if (User.IsInRole("Admin"))
+    {
+        @:| <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a>
+        @:| <a asp-action="Delete" asp-route-id="@Model.Id">Delete</a>
+    }
+</div> 
